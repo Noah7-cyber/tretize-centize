@@ -1,0 +1,94 @@
+html,body{font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif}
+:root{
+  --brand-700:#0d2740; --brand-600:#1f3e66; --accent-500:#1a73e8;
+  --ink:#111418; --muted-ink:#4c5661; --surface:#fff; --surface-2:#f5f7fa;
+  --radius:14px; --shadow:0 6px 22px rgba(0,0,0,.08);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;color:var(--ink);background:var(--surface-2)}
+.container{max-width:1120px;margin-inline:auto;padding:0 16px}
+
+.site-header{position:sticky;top:0;background:var(--surface);box-shadow:0 1px 0 rgba(0,0,0,.06);z-index:10}
+.header-row{display:flex;align-items:center;gap:16px;justify-content:space-between;padding:12px 0}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit}
+.logo{width:42px;height:34px}
+.nav{display:flex;gap:12px;align-items:center}
+
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;border:1px solid transparent;text-decoration:none;box-shadow:var(--shadow);background:#fff}
+.btn.primary{background:var(--accent-500);color:#111}
+.btn.ghost{background:transparent;color:var(--ink);border-color:#d7dce5}
+.btn:hover{transform:translateY(-1px)}
+
+.card{background:#fff;border:1px solid #e6e9ef;border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+.inline-form{display:flex;gap:8px}
+.stack > *{margin:6px 0}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+input,select,textarea{width:100%;padding:12px;border:1px solid #d7dce5;border-radius:10px;font:inherit;background:#fff}
+
+.panel{margin:16px 0}
+.panel-head{display:flex;align-items:center;justify-content:space-between;margin:12px 0}
+
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:860px){ .grid{grid-template-columns:1fr} }
+
+.timeline{margin-top:8px;padding-left:0;list-style:none;position:relative}
+.timeline::before{content:"";position:absolute;left:10px;top:0;bottom:0;width:2px;background:#e6e9ef}
+.timeline li{position:relative;padding:10px 12px 10px 32px;border-radius:10px;background:#fff;border:1px solid #e6e9ef;box-shadow:var(--shadow);margin:10px 0}
+.timeline li::before{content:"";position:absolute;left:4px;top:14px;width:12px;height:12px;border-radius:50%;background:var(--accent-500);border:2px solid #fff;box-shadow:0 0 0 2px #e6e9ef}
+.timeline li small{color:var(--muted-ink)}
+.badge{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;border:1px solid #d7dce5;background:#fff;margin-right:6px}
+.badge i{font-size:11px}
+
+.tiny{font-size:13px;color:var(--muted-ink)}
+
+.success{background:#e8f7ee;border-color:#9ad6b1}
+.warn{background:#fff8e6;border-color:#f0db95}
+#dnPreview th, #dnPreview td { font-size: 12px; }
+#dnPreview th { position: sticky; top: 0; z-index: 1; }
+.table-wrap { background: #fff; }
+#addForm button[type=submit]{ position:sticky; bottom:0; }
+/* Layout */
+.app-layout{
+  display:grid; grid-template-columns: 240px 1fr; gap:16px; align-items:start; margin-top:16px;
+}
+@media (max-width: 960px){
+  .app-layout{ grid-template-columns: 1fr; }
+}
+
+/* Worker navbar */
+.wkr-side{ position:sticky; top:76px; align-self:start; }
+.wkr-nav{ display:flex; flex-direction:column; gap:6px; background:#fff; border:1px solid #e6e9ef; border-radius:12px; padding:8px; box-shadow:var(--shadow) }
+.wkr-nav a{
+  display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:10px; text-decoration:none; color:var(--ink); border:1px solid transparent;
+}
+.wkr-nav a:hover{ background:#f7f9fc; border-color:#e6e9ef }
+.wkr-nav a[aria-current="page"]{ background:#eaf1ff; border-color:#d6e4ff }
+.wkr-nav a.soft{ opacity:.6; pointer-events:none }
+
+/* Content */
+.wkr-main{ display:flex; flex-direction:column; gap:16px }
+
+/* Helpers */
+.vh{ position:absolute!important; clip:rect(1px,1px,1px,1px); padding:0; border:0; height:1px; width:1px; overflow:hidden; white-space:nowrap }
+.flex-1{ flex:1 1 auto }
+.view[hidden]{ display:none !important }
+[hidden] { display: none !important; }
+.pw-wrap {
+  position: relative;
+  display: grid;
+}
+.pw-wrap input {
+  padding-right: 40px; /* room for the eye */
+}
+.pw-eye {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 1px solid #d7dce5;
+  background: #fff;
+  border-radius: 8px;
+  padding: 6px 8px;
+  cursor: pointer;
+}
+.pw-eye i { pointer-events: none; }

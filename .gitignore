@@ -1,0 +1,34 @@
+# Ignore node_modules everywhere
+**/node_modules/
+
+# Ignore environment files everywhere
+**/.env
+**/.env.*
+
+# Keep an example env if you want
+!**/.env.example
+
+# Build artifacts
+**/dist/
+**/build/
+**/.next/
+**/out/
+
+# Logs
+*.log
+logs
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# OS/editor junk
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# Coverage / testing
+coverage/
+.nyc_output/

@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Worker Portal — Tretize</title>
+
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+  <!-- Toasts -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/izitoast/dist/css/iziToast.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/izitoast/dist/js/iziToast.min.js" defer></script>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="./assets/css/workers.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-row">
+      <a class="brand" href="/">
+        <img src="./assets/img/logo.png" alt="Tretize" class="logo">
+        <span class="brand-text">Tretize • Worker Portal</span>
+      </a>
+      <nav class="nav">
+        <a class="btn ghost" href="index.html"><i class="fa-solid fa-house"></i> Public site</a>
+        <button class="btn ghost" id="logoutBtn" hidden><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+  <!-- AUTH GATE (unchanged) -->
+  <section class="card" id="authGate">
+    <h2><i class="fa-solid fa-id-badge"></i> Worker Sign in</h2>
+    <form id="loginForm" class="stack">
+      <input name="email" type="email" placeholder="Work email" required />
+       <div class="pw-wrap">
+
+            <input id="loginPw" name="password" type="password" placeholder="Password" required />
+
+    <button type="button" class="pw-eye" data-eye="loginPw" aria-label="Show password">
+
+        <i class="fa-regular fa-eye"></i>
+
+    </button>
+
+  </div>
+      <button class="btn primary" id="hardReset" type="submit">Sign in</button>
+    </form>
+
+    <div id="pwChange" hidden style="margin-top:16px">
+      <p class="form-hint">You must set a new password.</p>
+      <form id="pwForm" class="stack">
+        <input name="displayName" placeholder="Your full name (for supervision emails)" required />        
+            <div class="pw-wrap">
+                <input id="newPw" name="newPassword" type="password" placeholder="New password (min 8)" minlength="8" required />
+      <button type="button" class="pw-eye" data-eye="newPw" aria-label="Show password">
+          <i class="fa-regular fa-eye"></i>
+      </button>
+
+    </div>
+        <button class="btn primary" type="submit">Update password</button>
+      </form>
+    </div>
+
+    <p class="tiny form-hint" style="margin-top:10px">No self-registration. Ask IT to invite you.</p>
+  </section>
+
+  <!-- APP -->
+  <div id="app" hidden class="app-layout">
+    <!-- Worker navbar (left) -->
+    <aside class="wkr-side">
+      <nav class="wkr-nav" aria-label="Worker Navigation">
+        <a href="#/new" data-route="new"><i class="fa-solid fa-file-circle-plus"></i> New Shipment</a>
+        <a href="#/find" data-route="find"><i class="fa-solid fa-barcode"></i> Find</a>
+        <a href="#/recent" data-route="recent"><i class="fa-solid fa-clock-rotate-left"></i> Recent</a>
+        <a href="#/dn" data-route="dn"><i class="fa-solid fa-file-invoice"></i> Delivery Notes</a>
+        <a href="#/shipment" data-route="shipment" class="soft" aria-disabled="true" tabindex="-1"><i class="fa-solid fa-box"></i> Open Shipment</a>
+        <hr>
+        <a href="#/supervision" data-route="supervision" data-role="admin,it"><i class="fa-solid fa-shield-halved"></i> Supervision</a>
+        <a href="#/invite" data-route="invite" data-role="it"><i class="fa-solid fa-user-plus"></i> Invite Worker</a>
+      </nav>
+    </aside>
+
+    <!-- Content (right) -->
+    <section class="wkr-main">
+      <!-- FIND view -->
+      <section class="card view" id="view-find" hidden>
+        <h2><i class="fa-solid fa-barcode"></i> Find a Tracking ID</h2>
+        <form id="findForm" class="inline-form">
+          <label class="vh" for="trackingId">Tracking ID</label>
+          <input name="trackingId" id="trackingId" placeholder="Enter tracking ID (e.g. TRZ-20250915-ABCD)" required>
+          <button class="btn primary" type="submit"><i class="fa-solid fa-magnifying-glass"></i> Find</button>
+        </form>
+      </section>
+
+      <!-- RECENT view -->
+      <section class="card view" id="view-recent" hidden>
+        <h2><i class="fa-solid fa-clock-rotate-left"></i> Recent Shipments</h2>
+        <div class="tiny form-hint">Updated newest first. Click an ID to open.</div>
+        <div class="row" style="gap:8px;align-items:center;margin:8px 0 6px">
+          <input id="recentSearch" placeholder="Search ID/origin/destination/driver…" autocomplete="off" />
+          <select id="recentStatus">
+            <option value="">All statuses</option>
+            <option value="label">Label</option>
+            <option value="pickup">Pickup</option>
+            <option value="transit">Transit</option>
+            <option value="out">Out for delivery</option>
+            <option value="done">Delivered</option>
+          </select>
+          <button class="btn ghost tiny" id="recentClear" type="button">Clear</button>
+        </div>
+        <ul id="recentList" class="timeline"></ul>
+      </section>
+
+      <!-- NEW SHIPMENT view -->
+      <section class="card view" id="view-new" hidden>
+        <h2><i class="fa-solid fa-file-circle-plus"></i> New Shipment</h2>
+        <form id="newForm" class="stack">
+          <div class="row">
+            <input name="sender" placeholder="Sender name" required>
+            <input name="receiver" placeholder="Receiver name" required>
+          </div>
+          <div class="row">
+            <input name="phone" placeholder="Receiver phone" required>
+            <input name="cargo" placeholder="Cargo description">
+          </div>
+          <div class="row">
+            <input name="origin" placeholder="Origin" required>
+            <input name="destination" placeholder="Destination" required>
+          </div>
+          <div class="row">
+            <input name="count" type="number" min="1" step="1" placeholder="No. of shipments">
+            <select name="shipmentType">
+              <option value="">Type of shipment (optional)</option>
+              <option>Documents</option><option>Parcel</option><option>LTL</option>
+              <option>FTL</option><option>Palletized</option><option>Medical</option>
+            </select>
+          </div>
+          <div class="row">
+            <input name="weight" placeholder="Weight (kg)">
+            <input name="vehicle" placeholder="Vehicle / Plate">
+            <input name="driver" placeholder="Driver">
+          </div>
+
+          <div class="row">
+            <button class="btn ghost" id="exportCsvBtn" type="button">
+              <i class="fa-solid fa-file-csv"></i> Export (All)
+            </button>
+            <button class="btn ghost" id="exportCsvFilteredBtn" type="button">
+              <i class="fa-solid fa-filter"></i> Export (Filtered)
+            </button>
+            <span class="flex-1"></span>
+            <button class="btn primary" type="submit"><i class="fa-solid fa-plus"></i> Create shipment</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- SHIPMENT PANEL view -->
+      <section class="card view" id="view-shipment" hidden>
+        <h2>
+          <i class="fa-solid fa-box"></i> Shipment <code id="tidHead"></code>
+          <button class="btn ghost tiny" id="copyIdBtn" type="button" style="margin-left:8px">
+            <i class="fa-regular fa-copy"></i> Copy
+          </button>
+        </h2>
+        <div class="grid" style="grid-template-columns:1fr;gap:14px">
+          <form id="addForm" class="stack">
+            <div class="row">
+              <select name="icon" required>
+                <option value="pickup">Pickup</option>
+                <option value="transit">In transit</option>
+                <option value="out">Out for delivery</option>
+                <option value="done">Delivered</option>
+              </select>
+              <input name="location" placeholder="Location (optional)">
+            </div>
+            <input name="text" placeholder="Note (optional)">
+            <button class="btn primary" type="submit"><i class="fa-solid fa-plus"></i> Add checkpoint</button>
+          </form>
+
+          <form id="editForm" class="stack">
+            <h3 class="tiny" style="margin:6px 0 0 0"><i class="fa-solid fa-pen-to-square"></i> Correct shipment (role-based)</h3>
+            <div class="row">
+              <input name="driver" placeholder="Driver">
+              <input name="vehicle" placeholder="Vehicle / Plate">
+              <input name="weight" placeholder="Weight (kg)">
+            </div>
+            <div class="row">
+              <input name="destination" placeholder="Destination">
+              <input name="phone" placeholder="Receiver phone">
+            </div>
+            <button class="btn ghost" type="submit"><i class="fa-solid fa-floppy-disk"></i> Save changes</button>
+            <small class="form-hint tiny">Ops can edit driver/vehicle/weight/phone/destination. Admin/IT can edit everything.</small>
+          </form>
+
+          <div class="table-wrap" style="margin-top:10px;border:1px solid #e8eef7;border-radius:12px;overflow:auto;max-height:220px">
+            <table id="auditTable" class="tiny" style="width:100%;border-collapse:collapse"></table>
+          </div>
+
+          <ol class="timeline" id="timeline" aria-live="polite"></ol>
+        </div>
+      </section>
+
+      <!-- DELIVERY NOTES view -->
+      <section class="card view" id="view-dn" hidden>
+        <h3 style="margin:0 0 8px 0">Delivery Notes Pack</h3>
+        <p class="form-hint" style="margin:0 0 12px 0">
+          Upload CSV, review, then generate a ZIP of Delivery Note PDFs.
+        </p>
+
+        <div class="row" style="gap:8px; align-items:end; flex-wrap:wrap">
+          <div><label class="form-hint">CSV file</label><input type="file" id="dnCsv" accept=".csv" /></div>
+          <div><label class="form-hint">Defaults</label><input id="dnDefaultOrigin" placeholder="Default Origin (optional)" /></div>
+          <div><input id="dnDefaultDriver" placeholder="Default Driver (optional)" /></div>
+          <button class="btn ghost" id="dnPreviewBtn">Preview</button>
+          <button class="btn primary" id="dnBuildBtn" disabled>Build ZIP</button>
+        </div>
+
+        <div id="dnPreviewWrap" class="table-wrap" style="margin-top:12px; overflow:auto; max-height:320px; border-radius:12px; border:1px solid #e8eef7;">
+          <table id="dnPreview" class="tiny" style="width:100%; border-collapse:collapse"></table>
+        </div>
+        <p class="form-hint tiny" style="margin-top:8px">
+          CSV columns: <code>trackingId, date, customer, facility, lga, state, items, qty, vehicle, driver, phone, address, remarks</code>.
+        </p>
+      </section>
+
+      <!-- SUPERVISION view -->
+      <section class="card view" id="view-supervision" hidden>
+        <h2><i class="fa-solid fa-shield-halved"></i> Supervision</h2>
+        <div class="tiny form-hint">Search shipments and send correction notes.</div>
+        <form id="adminNoteForm" class="stack">
+          <div class="row">
+            <input id="adminShipId" placeholder="Tracking ID (e.g., TRZ-...)" required />
+            <input id="adminToEmail" placeholder="Worker email (optional)" type="email" />
+          </div>
+          <textarea id="adminNote" rows="3" placeholder="Write a correction / instruction to the assignee..." required></textarea>
+          <button class="btn primary" type="submit"><i class="fa-solid fa-paper-plane"></i> Send note</button>
+        </form>
+      </section>
+
+      <!-- INVITE view -->
+      <section class="card view" id="view-invite" hidden>
+        <h2><i class="fa-solid fa-user-plus"></i> Invite Worker (IT only)</h2>
+        <form id="inviteForm" class="inline-form">
+          <input name="email" type="email" placeholder="Work email" required>
+          <select name="role">
+            <option value="ops">Operations</option>
+            <option value="it">IT</option>
+            <option value="dispatch">Dispatch</option>
+            <option value="warehouse">Warehouse</option>
+            <option value="finance">Finance</option>
+            <option value="admin">Admin</option>
+          </select>
+          <button class="btn primary" type="submit">Invite</button>
+        </form>
+        <p class="tiny form-hint">The worker receives an email with a default password. They must change it on first login.</p>
+      </section>
+    </section>
+  </div>
+</main>
+
+
+  <!-- JS -->
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js" defer></script>
+<script src="./assets/js/worker.js" defer></script>
+</body>
+</html>
