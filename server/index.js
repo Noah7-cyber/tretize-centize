@@ -9,7 +9,7 @@ import { fileURLToPath } from 'url';
 import User from './models/User.js';
 import bcrypt from 'bcryptjs';
 import mongoose from 'mongoose';
-
+import quoteRouter from './routes/quote.js';
 // Routers
 import trackRouter from './routes/track.js';
 import authRouter from './routes/auth.js';
@@ -39,6 +39,7 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(PUBLIC_DIR, 'index.html'));
 });
 // ---------- API routes ----------
+app.use('/api/quote', quoteRouter);
 app.use('/api/track', requireAuth, trackRouter);
 app.use('/api/users', requireAuth, requireRole('it'), usersRouter);
 

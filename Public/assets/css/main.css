@@ -15,7 +15,7 @@
   --default-font: "Roboto",  system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --heading-font: "Poppins",  sans-serif;
   --nav-font: "Poppins",  sans-serif;
-}
+} 
 
 /* Global Colors - The following color variables are used throughout the website. Updating them here will change the color scheme of the entire website */
 :root { 
@@ -45,12 +45,15 @@
 }
 
 .dark-background {
-  --background-color: #0e1d34;
+  --background-color: #1a3c70; /* lighter blue instead of deep navy */
   --default-color: #ffffff;
   --heading-color: #ffffff;
-  --surface-color: #19335c;
+  --surface-color: #254b87; /* softer surface shade */
   --contrast-color: #ffffff;
+  background: linear-gradient(180deg, #1a3c70 0%, #204683 100%);
 }
+
+
 
 /* Smooth scroll */
 :root {
@@ -226,7 +229,7 @@ h6 {
   --heading-color: #ffffff;
   color: var(--default-color);
   background-color: var(--background-color);
-  padding: 20px 0;
+  padding: 10px 0;
   transition: all 0.5s;
   z-index: 997;
 }
@@ -236,12 +239,12 @@ h6 {
 }
 
 .header .logo img {
-  max-height: 36px;
+  max-height: 30px;
   margin-right: 8px;
 }
 
 .header .logo h1 {
-  font-size: 30px;
+  font-size: 21px;
   margin: 0;
   font-weight: 700;
   color: var(--heading-color);
@@ -273,6 +276,9 @@ h6 {
     order: 2;
     margin: 0 15px 0 0;
     padding: 6px 15px;
+     font-size: 13px !important;
+  padding: 6px 18px !important;
+  margin-left: 15px !important;
   }
 
   .header .navmenu {
@@ -283,6 +289,8 @@ h6 {
 .scrolled .header {
   padding: 10px 0;
   box-shadow: 0px 0 18px rgba(0, 0, 0, 0.1);
+    padding: 6px 0 !important;
+
 }
 
 /* Global Header on Scroll
@@ -315,7 +323,7 @@ h6 {
   .navmenu a,
   .navmenu a:focus {
     color: var(--nav-color);
-    padding: 18px 15px;
+    padding: 10px 12px;
     font-size: 16px;
     font-family: var(--nav-font);
     font-weight: 400;
@@ -884,6 +892,18 @@ section,
   object-fit: cover;
   z-index: 1;
 }
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(26, 60, 112, 0.65); /* semi-transparent blue tint */
+  z-index: 2;
+}
+.hero .container {
+  position: relative;
+  z-index: 3;
+}
+
 
 .hero .container {
   position: relative;
@@ -1243,99 +1263,7 @@ transform: scale(1.05); /* subtle zoom effect */
   margin-bottom: 0;
 }
 
-/*--------------------------------------------------------------
-# Pricing Section
---------------------------------------------------------------*/
-.pricing .pricing-item {
-  background-color: var(--surface-color);
-  box-shadow: 0 3px 20px -2px rgba(0, 0, 0, 0.1);
-  border-top: 4px solid var(--background-color);
-  padding: 60px 40px;
-  height: 100%;
-  border-radius: 5px;
-}
 
-.pricing h3 {
-  font-weight: 600;
-  margin-bottom: 15px;
-  font-size: 20px;
-}
-
-.pricing h4 {
-  color: var(--accent-color);
-  font-size: 48px;
-  font-weight: 400;
-  font-family: var(--heading-font);
-  margin-bottom: 0;
-}
-
-.pricing h4 sup {
-  font-size: 28px;
-}
-
-.pricing h4 span {
-  color: color-mix(in srgb, var(--default-color), transparent 50%);
-  font-size: 18px;
-}
-
-.pricing ul {
-  padding: 20px 0;
-  list-style: none;
-  color: color-mix(in srgb, var(--default-color), transparent 30%);
-  text-align: left;
-  line-height: 20px;
-}
-
-.pricing ul li {
-  padding: 10px 0;
-  display: flex;
-  align-items: center;
-}
-
-.pricing ul i {
-  color: #059652;
-  font-size: 24px;
-  padding-right: 3px;
-}
-
-.pricing ul .na {
-  color: color-mix(in srgb, var(--default-color), transparent 60%);
-}
-
-.pricing ul .na i {
-  color: color-mix(in srgb, var(--default-color), transparent 60%);
-}
-
-.pricing ul .na span {
-  text-decoration: line-through;
-}
-
-.pricing .buy-btn {
-  color: var(--accent-color);
-  display: inline-block;
-  padding: 8px 35px 10px 35px;
-  border-radius: 50px;
-  transition: none;
-  font-size: 16px;
-  font-weight: 500;
-  font-family: var(--heading-font);
-  transition: 0.3s;
-  border: 1px solid var(--accent-color);
-}
-
-.pricing .buy-btn:hover {
-  background: var(--accent-color);
-  color: var(--contrast-color);
-}
-
-.pricing .featured {
-  border-top-color: var(--accent-color);
-}
-
-.pricing .featured .buy-btn {
-  background: var(--accent-color);
-  color: var(--contrast-color);
-}
 
 @media (max-width: 992px) {
   .pricing .box {
@@ -1617,61 +1545,7 @@ transform: scale(1.05); /* subtle zoom effect */
   font-weight: 500;
 }
 
-/*--------------------------------------------------------------
-# Team Section
---------------------------------------------------------------*/
-.team .member {
-  background-color: var(--surface-color);
-  border: 1px solid color-mix(in srgb, var(--default-color), transparent 90%);
-  text-align: center;
-  margin-bottom: 20px;
-}
 
-.team .member img {
-  margin: -1px -1px 30px -1px;
-}
-
-.team .member .member-content {
-  padding: 0 20px 30px 20px;
-}
-
-.team .member h4 {
-  font-weight: 700;
-  margin-bottom: 2px;
-  font-size: 18px;
-}
-
-.team .member span {
-  font-style: italic;
-  display: block;
-  font-size: 13px;
-  color: color-mix(in srgb, var(--default-color), transparent 20%);
-}
-
-.team .member p {
-  padding-top: 10px;
-  font-size: 14px;
-  font-style: italic;
-  color: color-mix(in srgb, var(--default-color), transparent 40%);
-}
-
-.team .member .social {
-  margin-top: 15px;
-}
-
-.team .member .social a {
-  color: color-mix(in srgb, var(--default-color), transparent 60%);
-  transition: 0.3s;
-}
-
-.team .member .social a:hover {
-  color: var(--accent-color);
-}
-
-.team .member .social i {
-  font-size: 18px;
-  margin: 0 2px;
-}
 
 /*--------------------------------------------------------------
 # Service Details Section
@@ -1739,114 +1613,7 @@ transform: scale(1.05); /* subtle zoom effect */
   color: var(--accent-color);
 }
 
-/*--------------------------------------------------------------
-# Alt Pricing Section
---------------------------------------------------------------*/
-.alt-pricing .pricing-item {
-  background-color: var(--surface-color);
-  box-shadow: 0 3px 20px -2px rgba(0, 0, 0, 0.1);
-  padding-bottom: 30px;
-  position: relative;
-}
 
-.alt-pricing .pricing-item h3 {
-  font-weight: 700;
-  margin-bottom: 0;
-  font-size: 24px;
-}
-
-.alt-pricing .pricing-item h4 {
-  font-size: 48px;
-  color: var(--accent-color);
-  font-weight: 400;
-  font-family: var(--heading-font);
-  margin-bottom: 25px;
-  text-align: center;
-}
-
-.alt-pricing .pricing-item h4 sup {
-  font-size: 28px;
-}
-
-.alt-pricing .pricing-item h4 span {
-  color: color-mix(in srgb, var(--default-color), transparent 60%);
-  font-size: 18px;
-}
-
-.alt-pricing .pricing-item ul {
-  padding: 20px 0;
-  list-style: none;
-  color: color-mix(in srgb, var(--default-color), transparent 40%);
-  text-align: left;
-  line-height: 20px;
-}
-
-.alt-pricing .pricing-item ul li {
-  padding-top: 15px;
-  display: flex;
-  align-items: center;
-}
-
-.alt-pricing .pricing-item ul i {
-  color: #059652;
-  font-size: 24px;
-  padding-right: 3px;
-}
-
-.alt-pricing .pricing-item ul .na {
-  color: color-mix(in srgb, var(--default-color), transparent 60%);
-}
-
-.alt-pricing .pricing-item ul .na i {
-  color: color-mix(in srgb, var(--default-color), transparent 60%);
-}
-
-.alt-pricing .pricing-item ul .na span {
-  text-decoration: line-through;
-}
-
-.alt-pricing .buy-btn {
-  color: var(--contrast-color);
-  background-color: var(--accent-color);
-  border: 2px solid var(--accent-color);
-  display: inline-block;
-  padding: 12px 40px;
-  border-radius: 4px;
-  transition: none;
-  font-size: 16px;
-  font-weight: 500;
-  transition: 0.3s;
-  font-family: var(--heading-font);
-}
-
-.alt-pricing .buy-btn:hover {
-  background: color-mix(in srgb, var(--accent-color), transparent 20%);
-}
-
-.alt-pricing .featured {
-  background: var(--accent-color);
-}
-
-.alt-pricing .featured h3,
-.alt-pricing .featured h4,
-.alt-pricing .featured h4 span,
-.alt-pricing .featured ul,
-.alt-pricing .featured ul .na,
-.alt-pricing .featured ul i,
-.alt-pricing .featured ul .na i {
-  color: var(--contrast-color);
-}
-
-.alt-pricing .featured .buy-btn {
-  background: var(--accent-color);
-  color: var(--contrast-color);
-  border-color: var(--contrast-color);
-}
-
-.alt-pricing .featured .buy-btn:hover {
-  background: color-mix(in srgb, var(--accent-color) 90%, black 15%);
-  color: var(--contrast-color);
-}
 
 /*--------------------------------------------------------------
 # Contact Section
@@ -2002,9 +1769,38 @@ transform: scale(1.05); /* subtle zoom effect */
   background: color-mix(in srgb, var(--accent-color), transparent 20%);
 }
 
+/* Adjust Tretize logo size in the navbar */
 /*--------------------------------------------------------------
-# Starter Section Section
+# Awards & Recognition Section
 --------------------------------------------------------------*/
-.starter-section {
-  /* Add your styles here */
+.awards .award-card {
+  background: #ffffff;
+  border-radius: 12px;
+  transition: all 0.3s ease-in-out;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.awards .award-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+}
+
+.awards .award-img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid #eee;
+}
+
+.awards .award-card h4 {
+  color: var(--heading-color);
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.awards .award-desc {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.6;
 }

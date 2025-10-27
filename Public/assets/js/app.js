@@ -7,7 +7,14 @@ document.getElementById('quoteForm')?.addEventListener('submit', async (e) => {
   e.preventDefault();
   const data = Object.fromEntries(new FormData(e.target).entries());
   try {
-    const r = await fetch('api/quote', {
+    // Auto-detect backend base URL (works locally + after deployment)
+const API_BASE =
+  window.location.hostname === "localhost"
+    ? "http://localhost:5000"
+    : ""; // use same origin in production
+
+const r = await fetch(`${API_BASE}/api/quote`, {
+
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
