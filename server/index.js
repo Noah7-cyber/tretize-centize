@@ -27,24 +27,27 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(morgan('dev'));
 
+// ---------- API routes (MOVE THEM UP HERE) ----------
+app.use('/api/quote', quoteRouter);
+app.use('/api/track', trackRouter.public);
+app.use('/api/track-secure', requireAuth, trackRouter.secure);
+app.use('/api/users', requireAuth, requireRole('it'), usersRouter);
+app.use('/api/auth', authRouter);
+
+// ---------- Health check ----------
+app.get('/healthz', (_req, res) => res.status(200).send('ok'));
+
 // ---------- Static (serve your front-end) ----------
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const PUBLIC_DIR = path.join(__dirname, '..', 'Public'); // adjust if different
+const PUBLIC_DIR = path.join(__dirname, '..', 'Public');
+
 app.use(express.static(PUBLIC_DIR));
 
-// ---------- Health check for Render ----------
-app.get('/healthz', (_req, res) => res.status(200).send('ok'));
+// ---------- Catch-all (must be LAST) ----------
 app.get('*', (req, res) => {
   res.sendFile(path.join(PUBLIC_DIR, 'index.html'));
 });
-// ---------- API routes ----------
-app.use('/api/quote', quoteRouter);
-app.use('/api/track', requireAuth, trackRouter);
-app.use('/api/users', requireAuth, requireRole('it'), usersRouter);
-
-app.use('/api/auth', authRouter);
-
 
 // If you have public auth routes (login/change-password), mount them here:
 // app.use('/api/auth', authRouter);

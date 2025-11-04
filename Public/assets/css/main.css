@@ -43,6 +43,11 @@
   --background-color: #f7f9fc;
   --surface-color: #ffffff;
 }
+#aboutCarousel img {
+  border-radius: 12px;
+  object-fit: cover;
+  height: 400px; /* adjust to your layout */
+}
 
 .dark-background {
   --background-color: #1a3c70; /* lighter blue instead of deep navy */

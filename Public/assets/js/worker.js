@@ -3,6 +3,7 @@
 // ---------- Auth helpers ----------
 function getToken(){ return localStorage.getItem('token') || ''; }
 function getRole(){ return localStorage.getItem('role') || ''; }
+const TRACK_BASE = '/api/track-secure';
 
 function authHeaders(extra = {}) {
   const h = { ...extra };   // ✅ not ".extra"
@@ -74,19 +75,32 @@ function parseHash(){
 }
 
 async function handleRoute(){
-  if (!requireAuth()) return; // still at gate
+  if (!requireAuth()) return;
   const { key, param } = parseHash();
-  // guard by role for supervision/invite
+
+  // restrict certain pages by role
   if ((key==='supervision' && !['admin','it'].includes(getRole())) ||
       (key==='invite' && getRole()!=='it')) {
     iziToast.error({ title:'Access', message:'Not allowed for your role' });
     return showView('new');
   }
-  showView(key);
-  // auto-load when deep-linking a shipment
-  if (key==='shipment' && param) await load(param);
-  // default: bootstrap Recent on first visit
-  if (key==='recent') await loadRecent();
+
+  // only show default views right away
+  if (key !== 'shipment') showView(key);
+
+  if (key === 'shipment' && param) {
+    // show loading placeholder (optional)
+    tidHead.textContent = 'Loading...';
+    timeline.innerHTML = '<li class="warn">Loading shipment...</li>';
+    const ok = await load(param);
+    if (!ok) {
+      // revert view on fail
+      showView('find');
+      return;
+    }
+  }
+
+  if (key === 'recent') await loadRecent();
 }
 
 window.addEventListener('hashchange', handleRoute);
@@ -271,7 +285,7 @@ $('#newForm')?.addEventListener('submit', async (e)=>{
   const payload = Object.fromEntries(new FormData(e.target).entries()); // <-- put this back
   const done = setBusy(e.submitter, true, 'Creating…'); // NEW
   try{
-    const r = await apiFetch('/api/track', {
+    const r = await apiFetch(`${TRACK_BASE}`, {
       method:'POST',
       headers: authHeaders({'Content-Type':'application/json'}),
       body: JSON.stringify(payload)
@@ -313,7 +327,8 @@ $('#addForm')?.addEventListener('submit', async (e)=>{
   const prevHtml = timeline.innerHTML;
   renderTimeline([...(timeline.__data||[]), optimistic]); // store data on element
   try{
-    const r = await fetch(`/api/track/${encodeURIComponent(currentId)}/checkpoints`, {
+    const r = await fetch(`${TRACK_BASE}/${encodeURIComponent(currentId)}/checkpoints`, {
+
       method:'POST',
       headers: authHeaders({'Content-Type':'application/json'}),
       body: JSON.stringify(payload)
@@ -660,7 +675,7 @@ async function loadAudit(id){
   if (!t) return;
   t.innerHTML = '<tbody><tr><td style="padding:8px">Loading audit…</td></tr></tbody>';
   try{
-    const r = await fetch(`/api/track/${encodeURIComponent(id)}/audit`, { headers: authHeaders() });
+    const r = await fetch(`${TRACK_BASE}/${encodeURIComponent(id)}/audit`, { headers: authHeaders() });
     const out = await r.json();
     if(!out.ok) throw 0;
     const rows = out.data || [];
@@ -694,20 +709,20 @@ async function loadAudit(id){
 async function load(id){
   const data = await fetchTracking(id);
   if (!data){
-    iziToast.error({ title:'Tracking', message:'Not found. Create shipment first.' });
-    return;
+    iziToast.error({ title:'Tracking', message:'Shipment not found' });
+    return false;  // 👈 return false for handleRoute
   }
-  // ensure shipment view is active (works for direct function calls too)
-  showView('shipment');
 
   currentId = data.trackingId;
+  showView('shipment');  // now runs only if data exists
   tidHead.textContent = currentId;
   renderTimeline(data.checkpoints || []);
   fillEditForm(data);
   loadAudit(currentId);
-  // also set nav "Open Shipment" to enabled
   document.querySelector('.wkr-nav a[data-route="shipment"]')?.classList.remove('soft');
+  return true;  // 👈 success
 }
+
 
 
 // handle Save (role-based)
@@ -723,7 +738,7 @@ $('#editForm')?.addEventListener('submit', async (e)=>{
 
   const done = setBusy(e.submitter, true, 'Saving…');
   try{
-    const r = await fetch(`/api/track/${encodeURIComponent(currentId)}`, {
+    const r = await fetch(`${TRACK_BASE}/${encodeURIComponent(currentId)}`, {
       method:'PUT',
       headers: authHeaders({'Content-Type':'application/json'}),
       body: JSON.stringify(body)
@@ -750,7 +765,7 @@ $('#adminNoteForm')?.addEventListener('submit', async (e)=>{
   const btn = e.submitter;
   const done = setBusy(btn, true, 'Sending…');
   try{
-    const r = await fetch(`/api/track/${encodeURIComponent(id)}/admin-note`,{
+    const r = await fetch(`${TRACK_BASE}/${encodeURIComponent(id)}/admin-note`,{
       method:'POST',
       headers: authHeaders({'Content-Type':'application/json'}),
       body: JSON.stringify({ toEmail: toEmail || undefined, note })
