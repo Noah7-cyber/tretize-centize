@@ -1,5 +1,6 @@
 // server/routes/track.js
 import { Router } from 'express';
+import { nanoid } from 'nanoid';
 import { buildTransport, getFromAddress } from '../services/mailer.js';
 import Tracking from '../models/Tracking.js';
 import AuditLog from '../models/AuditLog.js';
@@ -13,7 +14,7 @@ function editableFields(role){
   return [];
 }
 function genId(){
-  const rand = Math.random().toString(36).substring(2,6).toUpperCase();
+  const rand = nanoid(6).toUpperCase();
   const date = new Date().toISOString().slice(0,10).replace(/-/g,'');
   return `TRZ-${date}-${rand}`;
 }
