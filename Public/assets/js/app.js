@@ -44,7 +44,7 @@ document.querySelectorAll('form[data-result]').forEach(form => {
     resEl.textContent = 'Loading...';
     if (sumEl) sumEl.textContent = '';
     try {
-      const r = await fetch(`api/track/${encodeURIComponent(id)}`);
+    const r = await fetch(`/api/track/${encodeURIComponent(id)}`);
       const out = await r.json();
       if (!out.ok) {
         resEl.textContent = 'Not found.';
@@ -52,7 +52,7 @@ document.querySelectorAll('form[data-result]').forEach(form => {
         return;
       }
       const d = out.data || {};
-      if (out.stale) fetch(`api/track/${encodeURIComponent(id)}/nudge`, { method: 'POST' }).catch(() => { });
+      if (out.stale) fetch(`/api/track/${encodeURIComponent(id)}/nudge`, { method: 'POST' }).catch(() => { });
 
       if (sumEl) {
         const parts = [
